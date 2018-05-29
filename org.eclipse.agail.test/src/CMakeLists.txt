@@ -1,0 +1,8 @@
+add_executable (testServer testServer.cpp)
+add_executable (testClient testClient.cpp)
+target_link_libraries (testServer TestDevice DeviceImp Device AbstractAgileObject ${GIO-2.0_LIBRARIES})
+target_link_libraries (testClient TestDeviceCaller DeviceCaller Device ${GIO-2.0_LIBRARIES})
+target_include_directories (testServer PUBLIC ${CMAKE_SOURCE_DIR}/org.eclipse.agail.Device/src/instance ${GIO-2.0_INCLUDE_DIRS})
+target_include_directories (testClient PUBLIC ${CMAKE_SOURCE_DIR}/org.eclipse.agail.DeviceCaller/src/instance ${GIO-2.0_INCLUDE_DIRS})
+target_compile_options (testServer PUBLIC ${GIO-2.0_CFLAGS_OTHER})
+target_compile_options (testClient PUBLIC ${GIO-2.0_CFLAGS_OTHER})

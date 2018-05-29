@@ -1,0 +1,6 @@
+add_library (DeviceCaller STATIC base/DeviceCaller.cpp)
+add_library (TestDeviceCaller STATIC instance/TestDeviceCaller.cpp)
+target_include_directories (DeviceCaller PUBLIC ${GIO-2.0_INCLUDE_DIRS})
+target_include_directories (TestDeviceCaller PUBLIC ${GIO-2.0_INCLUDE_DIRS})
+target_compile_options (DeviceCaller PUBLIC ${GIO-2.0_CFLAGS_OTHER})
+target_compile_options (TestDeviceCaller PUBLIC ${GIO-2.0_CFLAGS_OTHER})

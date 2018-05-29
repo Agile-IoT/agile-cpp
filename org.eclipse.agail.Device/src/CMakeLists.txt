@@ -1,0 +1,6 @@
+add_library (DeviceImp STATIC base/DeviceImp.cpp)
+add_library (TestDevice STATIC instance/TestDevice.cpp)
+target_include_directories (DeviceImp PUBLIC ${GIO-2.0_INCLUDE_DIRS})
+target_include_directories (TestDevice PUBLIC ${GIO-2.0_INCLUDE_DIRS})
+target_compile_options (DeviceImp PUBLIC ${GIO-2.0_CFLAGS_OTHER})
+target_compile_options (TestDevice PUBLIC ${GIO-2.0_CFLAGS_OTHER})
