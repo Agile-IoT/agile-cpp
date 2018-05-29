@@ -41,7 +41,7 @@ cmake .
 make
 ```
 
-The executable files will have been created in **bin** directory. In order to run them, execute, in two different terminals:
+The executable files will have been created in the **bin** directory. In order to run them, execute, in two different terminals:
 
 ```
 bin/testServer
