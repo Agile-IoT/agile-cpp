@@ -148,14 +148,21 @@ AGAIL::DeviceDefinition AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_DEFINITION () {
 AGAIL::RecordObject AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_LASTUPDATE (std::string componentID) {
     GVariant* gVar = genericMethod(STR(AGAIL_DEVICE_METHOD_LASTUPDATE),
                                    g_variant_new ("(s)", componentID.c_str()),
-                                   G_VARIANT_TYPE ("((sssssi))"));
+                                   G_VARIANT_TYPE ("((ssayssi))"));
     if (gVar == NULL)
           return AGAIL::RecordObject("", "", "", "", "", 0);
 
-    gchar *deviceID, *outComponentID, *value, *unit, *format;
+    GVariantIter* iter;
+    gchar *deviceID, *outComponentID, *unit, *format;
     gint32 lastUpdate;
-    g_variant_get (gVar, "((&s&s&s&s&si))", &deviceID, &outComponentID, &value, &unit, &format, &lastUpdate);
+    gchar valueByte;
+    std::string value;
+    g_variant_get (gVar, "((&s&say&s&si))", &deviceID, &outComponentID, &iter, &unit, &format, &lastUpdate);
+    while (g_variant_iter_loop (iter, "y", &valueByte))
+	value.push_back (valueByte);
+    g_variant_iter_free (iter);
     AGAIL::RecordObject object (deviceID, outComponentID, value, unit, format, lastUpdate);
+    g_variant_unref (gVar);
 
     return object;
 }
@@ -163,17 +170,24 @@ AGAIL::RecordObject AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_LASTUPDATE (std::st
 std::list<AGAIL::RecordObject> AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_LASTUPDATEALL () {
     GVariant* gVar = genericMethod (STR(AGAIL_DEVICE_METHOD_LASTUPDATEALL),
                                     NULL,
-                                    G_VARIANT_TYPE ("(a(sssssi))"));
+                                    G_VARIANT_TYPE ("(a(ssayssi))"));
     if (gVar == NULL)
         return std::list<AGAIL::RecordObject>();
 
     GVariantIter* iter;
-    gchar *deviceID, *componentID, *value, *unit, *format;
+    gchar *deviceID, *componentID, *unit, *format;
     gint32 lastUpdate;
+    GVariantIter* iterValue;
+    gchar valueByte;
     std::list<AGAIL::RecordObject> lastUpdateAll;
-    g_variant_get (gVar, "(a(sssssi))", &iter);
-    while (g_variant_iter_loop (iter, "(&s&s&s&s&si)", &deviceID, &componentID, &value, &unit, &format, &lastUpdate))
+    g_variant_get (gVar, "(a(ssayssi))", &iter);
+    while (g_variant_iter_loop (iter, "(&s&say&s&si)", &deviceID, &componentID, &iterValue, &unit, &format, &lastUpdate)) {
+	std::string value;
+	while (g_variant_iter_loop (iterValue, "y", &valueByte))
+	    value.push_back (valueByte);
+	//g_variant_iter_free (iterValue);
         lastUpdateAll.push_back (AGAIL::RecordObject (deviceID, componentID, value, unit, format, lastUpdate));
+    }
     g_variant_iter_free (iter);
     g_variant_unref (gVar);
 
@@ -183,14 +197,21 @@ std::list<AGAIL::RecordObject> AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_LASTUPDA
 AGAIL::RecordObject AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_DATA () {
     GVariant* gVar = genericMethod(STR(AGAIL_DEVICE_METHOD_DATA),
                                    NULL,
-                                   G_VARIANT_TYPE ("((sssssi))"));
+                                   G_VARIANT_TYPE ("((ssayssi))"));
     if (gVar == NULL)
           return AGAIL::RecordObject("", "", "", "", "", 0);
 
-    gchar *deviceID, *outComponentID, *value, *unit, *format;
+    GVariantIter* iter;
+    gchar *deviceID, *outComponentID, *unit, *format;
     gint32 lastUpdate;
-    g_variant_get (gVar, "((&s&s&s&s&si))", &deviceID, &outComponentID, &value, &unit, &format, &lastUpdate);
+    gchar valueByte;
+    std::string value;
+    g_variant_get (gVar, "((&s&say&s&si))", &deviceID, &outComponentID, &iter, &unit, &format, &lastUpdate);
+    while (g_variant_iter_loop (iter, "y", &valueByte))
+	value.push_back (valueByte);
+    g_variant_iter_free (iter);
     AGAIL::RecordObject data (deviceID, outComponentID, value, unit, format, lastUpdate);
+    g_variant_unref (gVar);
 
     return data;
 }
@@ -229,17 +250,24 @@ void AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_EXECUTE (std::string commandID) {
 std::list<AGAIL::RecordObject> AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_READALL () {
     GVariant* gVar = genericMethod (STR(AGAIL_DEVICE_METHOD_READALL),
                                     NULL,
-                                    G_VARIANT_TYPE ("(a(sssssi))"));
+                                    G_VARIANT_TYPE ("(a(ssayssi))"));
     if (gVar == NULL)
         return std::list<AGAIL::RecordObject>();
 
     GVariantIter* iter;
-    gchar *deviceID, *componentID, *value, *unit, *format;
+    gchar *deviceID, *componentID, *unit, *format;
     gint32 lastUpdate;
+    GVariantIter* iterValue;
+    gchar valueByte;
     std::list<AGAIL::RecordObject> readAll;
-    g_variant_get (gVar, "(a(sssssi))", &iter);
-    while (g_variant_iter_loop (iter, "(&s&s&s&s&si)", &deviceID, &componentID, &value, &unit, &format, &lastUpdate))
-        readAll.push_back (RecordObject (deviceID, componentID, value, unit, format, lastUpdate));
+    g_variant_get (gVar, "(a(ssayssi))", &iter);
+    while (g_variant_iter_loop (iter, "(&s&say&s&si)", &deviceID, &componentID, &iterValue, &unit, &format, &lastUpdate)) {
+	std::string value;
+	while (g_variant_iter_loop (iterValue, "y", &valueByte))
+	    value.push_back (valueByte);
+	//g_variant_iter_free (iterValue);
+        readAll.push_back (AGAIL::RecordObject (deviceID, componentID, value, unit, format, lastUpdate));
+    }
     g_variant_iter_free (iter);
     g_variant_unref (gVar);
 
@@ -249,22 +277,33 @@ std::list<AGAIL::RecordObject> AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_READALL 
 AGAIL::RecordObject AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_READ (std::string componentID) {
     GVariant* gVar = genericMethod(STR(AGAIL_DEVICE_METHOD_READ),
                                    g_variant_new ("(s)", componentID.c_str()),
-                                   G_VARIANT_TYPE ("((sssssi))"));
+                                   G_VARIANT_TYPE ("((ssayssi))"));
     if (gVar == NULL)
           return AGAIL::RecordObject("", "", "", "", "", 0);
 
-    gchar *deviceID, *outComponentID, *value, *unit, *format;
+    GVariantIter* iter;
+    gchar *deviceID, *outComponentID, *unit, *format;
     gint32 lastUpdate;
-    g_variant_get (gVar, "((&s&s&s&s&si))", &deviceID, &outComponentID, &value, &unit, &format, &lastUpdate);
+    gchar valueByte;
+    std::string value;
+    g_variant_get (gVar, "((&s&say&s&si))", &deviceID, &outComponentID, &iter, &unit, &format, &lastUpdate);
+    while (g_variant_iter_loop (iter, "y", &valueByte))
+        value.push_back (valueByte);
+    g_variant_iter_free (iter);
     AGAIL::RecordObject read (deviceID, outComponentID, value, unit, format, lastUpdate);
+    g_variant_unref (gVar);
 
     return read;
 }
 
 void AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_WRITE (std::string componentID, std::string payload) {
+    GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("ay"));
+    for (std::string::iterator it = payload.begin(); it != payload.end(); it++)
+        g_variant_builder_add (builder, "y", *it);
     GVariant* gVar = genericMethod(STR(AGAIL_DEVICE_METHOD_WRITE),
-                                   g_variant_new ("(ss)", componentID.c_str(), payload.c_str()),
+                                   g_variant_new ("(say)", componentID.c_str(), builder),
                                    NULL);
+	g_variant_builder_unref (builder);
 }
 
 void AGAIL::DeviceCaller::AGAIL_DEVICE_METHOD_SUBSCRIBE (std::string componentID) {

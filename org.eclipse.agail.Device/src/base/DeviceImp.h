@@ -68,8 +68,6 @@ class AGAIL::DeviceImp : public AGAIL::Device, public AGAIL::AbstractAgileObject
         virtual gboolean handleSetPropertyCb(GDBusConnection *, const gchar *, const gchar *, const gchar *, const gchar *, GVariant *, GError **);
 
 	virtual void onUnknownMethod(std::string);
-
-    private:
 };
 
 #endif

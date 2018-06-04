@@ -17,7 +17,7 @@ GError* AGAIL::AbstractAgileObject::initBus() {
     GError *g_error;
 
     introspection_data = g_dbus_node_info_new_for_xml (busIntrospection.c_str(), &g_error);
-    if(g_error != NULL)
+    if(introspection_data == NULL)
         return g_error;
 
     owner_id = g_bus_own_name(DEFAULT_DBUS_CONNECTION,

@@ -30,13 +30,13 @@ std::string AGAIL::DeviceImp::generateDbusIntrospection(std::string extraIntrosp
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_LASTUPDATE) + "'>" +
     "    <arg name='componentID' type='s' direction='in'/>" +
-    "    <arg name='return' type='(sssssi)' direction='out'/>" +
+    "    <arg name='return' type='(ssayssi)' direction='out'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_LASTUPDATEALL) + "'>" +
-    "    <arg name='return' type='a(sssssi)' direction='out'/>" +
+    "    <arg name='return' type='a(ssayssi)' direction='out'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_DATA) + "'>" +
-    "    <arg name='return' type='(sssssi)' direction='out'/>" +
+    "    <arg name='return' type='(ssayssi)' direction='out'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_PROTOCOL) + "'>" +
     "    <arg name='return' type='s' direction='out'/>" +
@@ -49,15 +49,15 @@ std::string AGAIL::DeviceImp::generateDbusIntrospection(std::string extraIntrosp
     "    <arg name='commandID' type='s' direction='in'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_READALL) + "'>" +
-    "    <arg name='return' type='a(sssssi)' direction='out'/>" +
+    "    <arg name='return' type='a(ssayssi)' direction='out'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_READ) + "'>" +
     "    <arg name='componentID' type='s' direction='in'/>" +
-    "    <arg name='return' type='(sssssi)' direction='out'/>" +
+    "    <arg name='return' type='(ssayssi)' direction='out'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_WRITE) + "'>" +
     "    <arg name='componentID' type='s' direction='in'/>" +
-    "    <arg name='payload' type='s' direction='in'/>" +
+    "    <arg name='payload' type='ay' direction='in'/>" +
     "  </method>" +
     "  <method name='" + STR(AGAIL_DEVICE_METHOD_SUBSCRIBE) + "'>" +
     "    <arg name='componentID' type='s' direction='in'/>" +
@@ -249,21 +249,34 @@ void AGAIL::DeviceImp::handleMethodCall(GDBusConnection *connection, const gchar
         const gchar *componentID;
         g_variant_get (parameters, "(&s)", &componentID);
         AGAIL::RecordObject ret = AGAIL_DEVICE_METHOD_LASTUPDATE(componentID);
-        out = g_variant_new ("((sssssi))", ret.deviceID.c_str(), ret.componentID.c_str(), ret.value.c_str(), ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("ay"));
+	for (std::string::const_iterator it = ret.value.begin(); it != ret.value.end(); it++)
+	    g_variant_builder_add (builder, "y", *it);
+        out = g_variant_new ("((ssayssi))", ret.deviceID.c_str(), ret.componentID.c_str(), builder, ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	g_variant_builder_unref (builder);
     }
     // Method LastUpdateAll
     else if (g_strcmp0 (method_name, STR(AGAIL_DEVICE_METHOD_LASTUPDATEALL)) == 0) {
         std::list<AGAIL::RecordObject> ret = AGAIL_DEVICE_METHOD_LASTUPDATEALL();
-        GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("a(sssssi)"));
-        for (std::list<AGAIL::RecordObject>::iterator it = ret.begin(); it != ret.end(); it++)
-            g_variant_builder_add (builder, "(sssssi)", it->deviceID.c_str(), it->componentID.c_str(), it->value.c_str(), it->unit.c_str(), it->format.c_str(), it->lastUpdate);
-        out = g_variant_new ("(a(sssssi))", builder);
+        GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("a(ssayssi)"));
+        for (std::list<AGAIL::RecordObject>::iterator it = ret.begin(); it != ret.end(); it++) {
+	    GVariantBuilder* valueBuilder = g_variant_builder_new (G_VARIANT_TYPE("ay"));
+	    for (std::string::const_iterator it2 = it->value.begin(); it2 != it->value.end(); it2++)
+		g_variant_builder_add (valueBuilder, "y", *it2);
+            g_variant_builder_add (builder, "(ssayssi)", it->deviceID.c_str(), it->componentID.c_str(), valueBuilder, it->unit.c_str(), it->format.c_str(), it->lastUpdate);
+	    g_variant_builder_unref (valueBuilder);
+	}
+        out = g_variant_new ("(a(ssayssi))", builder);
         g_variant_builder_unref (builder);
     }
     // Method Data
     else if (g_strcmp0 (method_name, STR(AGAIL_DEVICE_METHOD_DATA)) == 0) {
         AGAIL::RecordObject ret = AGAIL_DEVICE_METHOD_DATA();
-        out = g_variant_new ("((sssssi))", ret.deviceID.c_str(), ret.componentID.c_str(), ret.value.c_str(), ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("ay"));
+	for (std::string::const_iterator it = ret.value.begin(); it != ret.value.end(); it++)
+	    g_variant_builder_add (builder, "y", *it);
+        out = g_variant_new ("((ssayssi))", ret.deviceID.c_str(), ret.componentID.c_str(), builder, ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	g_variant_builder_unref (builder);
     }
     // Method Protocol
     else if (g_strcmp0 (method_name, STR(AGAIL_DEVICE_METHOD_PROTOCOL)) == 0) {
@@ -287,10 +300,15 @@ void AGAIL::DeviceImp::handleMethodCall(GDBusConnection *connection, const gchar
     // Method ReadAll
     else if (g_strcmp0 (method_name, STR(AGAIL_DEVICE_METHOD_READALL)) == 0) {
         std::list<AGAIL::RecordObject> ret = AGAIL_DEVICE_METHOD_READALL();
-        GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("a(sssssi)"));
-        for (std::list<AGAIL::RecordObject>::iterator it = ret.begin(); it != ret.end(); it++)
-            g_variant_builder_add (builder, "(sssssi)", it->deviceID.c_str(), it->componentID.c_str(), it->value.c_str(), it->unit.c_str(), it->format.c_str(), it->lastUpdate);
-        out = g_variant_new ("(a(sssssi))", builder);
+        GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("a(ssayssi)"));
+        for (std::list<AGAIL::RecordObject>::iterator it = ret.begin(); it != ret.end(); it++) {
+	    GVariantBuilder* valueBuilder = g_variant_builder_new (G_VARIANT_TYPE("ay"));
+	    for (std::string::const_iterator it2 = it->value.begin(); it2 != it->value.end(); it2++)
+        	g_variant_builder_add (valueBuilder, "y", *it2);
+            g_variant_builder_add (builder, "(ssayssi)", it->deviceID.c_str(), it->componentID.c_str(), valueBuilder, it->unit.c_str(), it->format.c_str(), it->lastUpdate);
+	    g_variant_builder_unref (valueBuilder);
+	}
+        out = g_variant_new ("(a(ssayssi))", builder);
         g_variant_builder_unref (builder);
     }
     // Method Read
@@ -298,12 +316,22 @@ void AGAIL::DeviceImp::handleMethodCall(GDBusConnection *connection, const gchar
         const gchar *componentID;
         g_variant_get (parameters, "(&s)", &componentID);
         AGAIL::RecordObject ret = AGAIL_DEVICE_METHOD_READ(componentID);
-        out = g_variant_new ("((sssssi))", ret.deviceID.c_str(), ret.componentID.c_str(), ret.value.c_str(), ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	GVariantBuilder* builder = g_variant_builder_new (G_VARIANT_TYPE ("ay"));
+	for (std::string::const_iterator it = ret.value.begin(); it != ret.value.end(); it++)
+	    g_variant_builder_add (builder, "y", *it);
+        out = g_variant_new ("((ssayssi))", ret.deviceID.c_str(), ret.componentID.c_str(), builder, ret.unit.c_str(), ret.format.c_str(), ret.lastUpdate);
+	g_variant_builder_unref (builder);
     }
     // Method Write
     else if (g_strcmp0 (method_name, STR(AGAIL_DEVICE_METHOD_WRITE)) == 0) {
-        const gchar *componentID, *payload;
-        g_variant_get (parameters, "(&s&s)", &componentID, &payload);
+	GVariantIter* iter;
+        const gchar *componentID;
+	gchar payloadByte;
+	std::string payload;
+        g_variant_get (parameters, "(&say)", &componentID, &iter);
+	while (g_variant_iter_loop (iter, "y", &payloadByte))
+            payload.push_back (payloadByte);
+	g_variant_iter_free (iter);
         AGAIL_DEVICE_METHOD_WRITE(componentID, payload);
     }
     // Method Subscribe
