@@ -48,11 +48,21 @@ Example programs to test the different AGILE devices. The code can be found in d
 
 * Audio example: creates a Microphone and a Speaker object and plays through the speaker the audio coming from the microphone.
 
-## Compiling and running the example tests
+## Adele NEXT software
+
+Software that runs in the NEXT robot from Adele Robots using the AGILE stack. At the moment, this software performs two main tasks:
+
+* get the input from the microphone and send it to the cloud-based AI platform FIONA
+
+* get the audio from the cloud-based AI platform FIONA and play it through the speaker
+
+The code can be found in **org.eclipse.agail.Adele-NEXT**.
+
+## Compiling and running the example tests and the NEXT software
 
 ### Test Device example
 
-To execute this example, no extra libraries are required. Once the code in the agile-cpp repository has been downloaded, go to the repository root folder and run:
+To execute this example, no extra libraries are required. Once the code in the agile-cpp repository has been downloaded, go to the repository root directory and run:
 
 ```
 cmake .
@@ -132,4 +142,39 @@ bin/testAudioServer
 
 ```
 bin/testAudioClient
+```
+
+### Adele NEXT software
+
+This software requires the Microphone and Speaker devices, and therefore, the libsoundio library needs to be installed. On the other hand, the libcurl and libcurlpp libraries are required. The libcurl library can be installed in Ubuntu or similar systems by doing, for example:
+
+```
+sudo apt-get install libcurl4-openssl-dev
+```
+
+Otherwise, the library is available in the corresponding [Github repository](https://github.com/curl/curl).
+
+The libcurlpp library can be installed by downloading the code from the [Github repository](https://github.com/datacratic/curlpp) and running (from its root directory):
+
+```
+cmake .
+make
+sudo make install
+```
+
+In order to build the NEXT software, execute:
+
+```
+cmake -DBUILD_MICROPHONE=ON -DBUILD_SPEAKER=ON -DBUILD_NEXT=ON .
+make
+```
+
+Then, to run it:
+
+```
+bin/testAudioServer
+```
+
+```
+bin/conversation
 ```

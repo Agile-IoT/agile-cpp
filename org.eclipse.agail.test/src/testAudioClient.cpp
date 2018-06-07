@@ -33,6 +33,7 @@ int main() {
     std::cout << "Connected to speaker" << std::endl;
     std::cout << "Output audio device stream: " << soundio_channel_layout_get_default(n_channels)->name << " " << sample_rate << "Hz " << soundio_format_string(sample_format) << " interleaved" << std::endl;
 
+    // Send the input coming from the microphone to the speaker
     int recordTime = 5;
     int period = 20;
     int periodBytes = (int)round (soundio_get_bytes_per_second (sample_format, n_channels, sample_rate) * period / 1000);

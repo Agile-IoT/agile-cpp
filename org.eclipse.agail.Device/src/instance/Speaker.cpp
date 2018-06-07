@@ -168,7 +168,7 @@ void AGAIL::Speaker::write_callback(struct SoundIoOutStream *outstream, int fram
     // in that iteration, we copy those frames to a buffer and we tell the device that we have finished
     // writing those frames
     if (fill_frames < frame_count_min || fill_frames == 0) {
-	fprintf (stderr, "speaker ring buffer overflow\n");
+	//fprintf (stderr, "speaker ring buffer overflow\n");
 	//exit(1);
 	// If there are no frames available, send silence to the audio device
 	const int silence_duration_ms = 50; // we send at least 50 milliseconds of silence to the speaker
