@@ -38,7 +38,7 @@ Implements an API to allow applications access AGILE devices in a simple way. Th
 
 ## AGILE IDM Entity Storage
 
-Uses a leveldb key-value database to store information about the different types of entities (users, clients, sensors...). Both key and value are stored in JSON format, being the key formed by a type (e.g., "/sensor") and an ID (e.g., "323"). The code can be found in directory **org.eclipse.agail.test**.
+Uses a leveldb key-value database to store information about the different types of entities (users, clients, sensors...) and handle them in AGILE Identity Management. Both key and value are stored in JSON format, being the key formed by a type (e.g., "/sensor") and an ID (e.g., "323"). The code can be found in directory **org.eclipse.agail.IdmEntityStorage**.
 
 ## AGILE C++ example tests
 
