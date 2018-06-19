@@ -1,6 +1,6 @@
 # agile-cpp
 
-This repository contains a partial C++ implementation of the AGILE stack (focusing on the Device component).
+This repository contains a partial C++ implementation of the AGILE stack (focusing on the Device and Security components).
 
 ## AGILE D-Bus C++ interface
 
@@ -36,17 +36,23 @@ Implements an API to allow applications access AGILE devices in a simple way. Th
 
 * Speaker Caller: the code in files SpeakerCaller.h and SpeakerCaller.cpp allows applications to access the speaker through the AGILE API.
 
+## AGILE IDM Entity Storage
+
+Uses a leveldb key-value database to store information about the different types of entities (users, clients, sensors...). Both key and value are stored in JSON format, being the key formed by a type (e.g., "/sensor") and an ID (e.g., "323"). The code can be found in directory **org.eclipse.agail.test**.
+
 ## AGILE C++ example tests
 
 Example programs to test the different AGILE devices. The code can be found in directory **org.eclipse.agail.test**.
 
-* Test Device examples: creates a Test Device object and tests the different AGILE interface methods using the Test Device Caller.
+* Test Device example: creates a Test Device object and tests the different AGILE interface methods using the Test Device Caller.
 
 * Microphone example: creates a Microphone object and records 5 seconds of the incoming audio to file record.raw.
 
 * Speaker example: creates a Speaker object and plays the audio in file record.raw.
 
 * Audio example: creates a Microphone and a Speaker object and plays through the speaker the audio coming from the microphone.
+
+* Security examples: open the entities database and test the different API methods to create, read, update and delete entries with an entity information.
 
 ## Adele NEXT software
 
@@ -142,6 +148,38 @@ bin/testAudioServer
 
 ```
 bin/testAudioClient
+```
+
+### Security examples
+
+The Security module depends on both the leveldb and the jsoncpp libraries. In Ubuntu or similar systems, these two libraries can be installed by running the commands:
+
+```
+sudo apt-get install libleveldb-dev
+sudo apt-get install libjsoncpp-dev
+```
+
+Otherwise, both libraries are available in their corresponding Github repositories ([leveldb](https://github.com/google/leveldb) and [jsoncpp](https://github.com/open-source-parsers/jsoncpp)).
+
+In order to build the examples, execute:
+
+```
+cmake -DBUILD_SECURITY=ON .
+make
+```
+
+Then, to run them:
+
+```
+bin/testLevelStorage
+```
+
+```
+bin/testEntityConnectionPool
+```
+
+```
+bin/testStorage
 ```
 
 ### Adele NEXT software
