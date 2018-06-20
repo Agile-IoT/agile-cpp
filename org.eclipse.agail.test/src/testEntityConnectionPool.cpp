@@ -1,7 +1,7 @@
-#include "EntityConnectionPool.h"
-
 #include <iostream>
 #include <fstream>
+
+#include "EntityConnectionPool.h"
 
 int main () {
     // Open and parse the configuration file

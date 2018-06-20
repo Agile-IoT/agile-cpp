@@ -1,7 +1,7 @@
-#include "Storage.h"
-
 #include <iostream>
 #include <fstream>
+
+#include "Storage.h"
 
 int main () {
     // Open and parse the configuration file

@@ -20,6 +20,7 @@ public:
 	void setOutAudioEnabled (bool outAudioEnabled);	// enables/disables the output audio thread
 	int setAvatar (std::string usermail, std::string usrid2, std::string avatarId, std::string avname);	// sets the avatar identification parameters
 	int setProtocol (Protocol protocol);	// sets the protocol (HTTP, HTTPS...)
+	int setProtocol (std::string protocol); // sets the protocol (HTTP, HTTPS...)
 	int setSm (std::string smUrl);	// sets the SM
 	int setAio (std::string aioUrl);	// sets the AIO
 	int setDefAio (std::string defAioUrl);	// sets the default AIO (in case the SM does not respond)
@@ -37,6 +38,7 @@ private:
 	std::string avatarId;
 	std::string avname;
 	std::string protocol;
+	std::string protocolStr;
 	std::string defProtocol = "http:";
 	std::string smUrl;
 	std::string defSmUrl = "sm.adelerobots.com";

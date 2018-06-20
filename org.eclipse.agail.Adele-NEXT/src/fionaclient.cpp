@@ -84,7 +84,7 @@ int FionaClient::setAvatar (std::string usermail, std::string usrid2, std::strin
 }
 
 // Sets the protocol (HTTP, HTTPS...)
-int FionaClient::setProtocol (Protocol protocol){
+int FionaClient::setProtocol (Protocol protocol) {
 	if (inited) {
 		std::cerr << "Virtual Robot already initialized. Cannot modify protocol" << std::endl;
 		return 1;
@@ -100,6 +100,17 @@ int FionaClient::setProtocol (Protocol protocol){
 		std::cerr << "Unknown protocol" << std::endl;
 		break;
 	}
+
+	return 0;
+}
+
+// Sets the protocol (HTTP, HTTPS...)
+int FionaClient::setProtocol (std::string protocol) {
+        if (inited) {
+                std::cerr << "Virtual Robot already initialized. Cannot modify protocol" << std::endl;
+                return 1;
+        }
+	this->protocol = protocol;
 
 	return 0;
 }

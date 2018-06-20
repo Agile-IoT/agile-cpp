@@ -38,7 +38,7 @@ Implements an API to allow applications access AGILE devices in a simple way. Th
 
 ## AGILE IDM Entity Storage
 
-Uses a leveldb key-value database to store information about the different types of entities (users, clients, sensors...) and handle them in AGILE Identity Management. Both key and value are stored in JSON format, being the key formed by a type (e.g., "/sensor") and an ID (e.g., "323"). The code can be found in directory **org.eclipse.agail.IdmEntityStorage**.
+Uses a leveldb key-value database to store information about the different types of entities (users, clients, sensors...) and handle them in AGILE Identity Management. Both key and value are stored in JSON format, being the key formed by a type (e.g., "/sensor") and an ID (e.g., "323"). The code can be found in directory **org.eclipse.agail.test**.
 
 ## AGILE C++ example tests
 
@@ -62,7 +62,7 @@ Software that runs in the NEXT robot from Adele Robots using the AGILE stack. At
 
 * get the audio from the cloud-based AI platform FIONA and play it through the speaker
 
-The code can be found in **org.eclipse.agail.Adele-NEXT**.
+The information about the cloud-based platform FIONA and the client credentials are stored using the AGILE IDM Entity Storage module. The code can be found in **org.eclipse.agail.Adele-NEXT**.
 
 ## Compiling and running the example tests and the NEXT software
 
@@ -184,7 +184,7 @@ bin/testStorage
 
 ### Adele NEXT software
 
-This software requires the Microphone and Speaker devices, and therefore, the libsoundio library needs to be installed. On the other hand, the libcurl and libcurlpp libraries are required. The libcurl library can be installed in Ubuntu or similar systems by doing, for example:
+This software requires the Microphone and Speaker devices and the Security module, and therefore, the libsoundio, leveldb and jsoncpp libraries need to be installed. On the other hand, the libcurl and libcurlpp libraries are required. The libcurl library can be installed in Ubuntu or similar systems by doing, for example:
 
 ```
 sudo apt-get install libcurl4-openssl-dev
@@ -203,11 +203,17 @@ sudo make install
 In order to build the NEXT software, execute:
 
 ```
-cmake -DBUILD_MICROPHONE=ON -DBUILD_SPEAKER=ON -DBUILD_NEXT=ON .
+cmake -DBUILD_MICROPHONE=ON -DBUILD_SPEAKER=ON -DBUILD_SECURITY=ON -DBUILD_NEXT=ON .
 make
 ```
 
-Then, to run it:
+Before running it, the database with the FIONA client entry needs to be created:
+
+```
+bin/createFionaDbEntry
+```
+
+Then:
 
 ```
 bin/testAudioServer

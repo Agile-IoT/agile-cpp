@@ -1,7 +1,7 @@
-#include "LevelStorage.h"
-
 #include <iostream>
 #include <fstream>
+
+#include "LevelStorage.h"
 
 int main () {
     // Open and parse the configuration file
