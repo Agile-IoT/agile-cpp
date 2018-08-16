@@ -62,7 +62,7 @@ Software that runs in the NEXT robot from Adele Robots using the AGILE stack. At
 
 * get the audio from the cloud-based AI platform FIONA and play it through the speaker
 
-The information about the cloud-based platform FIONA and the client credentials are stored using the AGILE IDM Entity Storage module. The code can be found in **org.eclipse.agail.Adele-NEXT**.
+The information about the cloud-based platform FIONA and the client credentials are stored using the AGILE IDM Entity Storage module. The code can be found in directory **org.eclipse.agail.Adele-NEXT**.
 
 ## Compiling and running the example tests and the NEXT software
 
